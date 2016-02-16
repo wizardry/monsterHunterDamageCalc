@@ -1,0 +1,14 @@
+大剣             => large sword
+太刀             => long sword
+片手剣           => sword
+双剣             => twin sword
+ハンマー           => hammer
+笛               => whistie
+ランス             => lance
+ガンランス          => gunlance
+虫棍棒           => insect club
+チャージアックス      => charge axe
+スラッシュアックス      => slash axe
+弓               => bow
+ライトボウガン       => light crossbow
+ヘビィボウガン       => heavy crossbow
