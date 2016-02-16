@@ -1,7 +1,9 @@
-*/node_modules/
-*/node_module/
-*/bower_components/
+node_modules/
+node_module/
+build/
+bower_components/
 *.sass-cache
+.sass-cache/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
