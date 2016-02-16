@@ -96,13 +96,15 @@ g.task('compress',['mocha'], function() {
 });
 
 g.task('lint', function() {
-	return g.src(srcPath + 'js/**/*.js')
+	return g.src([srcPath + 'js/**/*.js','!'+ srcPath + 'js/**/lib/*.js'])
 	.pipe(jshint())
 	.pipe(jshint.reporter('default'));
 });
 
 function copyJS(){
-	g.src(srcPath+'js/**/.json')
+	g.src(srcPath+'js/**/*.json')
+	.pipe(g.dest(buildPath+'js/'));
+	g.src(srcPath+'js/**/*.js')
 	.pipe(g.dest(buildPath+'js/'));
 };
 function copyImg(){
