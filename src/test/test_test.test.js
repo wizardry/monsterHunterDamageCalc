@@ -1,5 +1,7 @@
-var should = require('should');
-var math = require('../js/test_test');
+
+/**
+* mocha style test
+*
 
 describe('math',function(){
     it('正常系：足し算 1+1=2',function(){
@@ -12,3 +14,15 @@ describe('math',function(){
         math.max(2,5).should.equal(5);
     });
 });
+*/
+QUnit.module("math",{
+    setup:function(){},
+    teardown:function(){},
+})
+QUnit.test("math TEST",function(){
+    var mathTest = math;
+    console.log(0);
+    QUnit.assert.deepEqual(mathTest.addition(1,1),2,'足し算 1+1=2');
+    QUnit.assert.deepEqual(mathTest.multiplication(2,5),10,'掛け算 2*5=10');
+    QUnit.assert.deepEqual(mathTest.max(1,10),10,'最大値取得');
+})

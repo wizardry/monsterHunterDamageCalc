@@ -1,0 +1,8 @@
+{
+    "opts": {
+        "encoding": "utf8",
+        "recurse": false,
+        "private": false,
+        "lenient": true
+    }
+}

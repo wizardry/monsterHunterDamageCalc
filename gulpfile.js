@@ -1,11 +1,22 @@
 //本体系
 
+/**
+* 外部に記述している定数ファイル。
+*/
+var prop = require('./tasks.const');
+console.log(prop)
+
 /*
 * @ g 		= gulp 本体
 * @ gulpif 	= gulp内でif文を利用できるようにする
 */
 var g = require('gulp');
 var gulpif = require('gulp-if');
+
+/**
+* ディレクトリ作成権限周りをうまいことしてくれる
+*/
+var mkdirp = require('mkdirp');
 
 /*
 * 簡単なオプションをまとめる。
@@ -21,10 +32,11 @@ var options = {
 }
 
 //開発パス、ビルドパス
-var srcPath = './src/'
-var buildPath = './build/'
+var srcPath = prop.SRC_PATH;
+var buildPath = prop.BUILD_PATH;
 
-
+console.log(srcPath);
+console.log(buildPath);
 /**
 * @ yargs = gulp タスクコマンドに引数を渡せる
 * @ 
@@ -66,40 +78,38 @@ g.task('imagemin', function () {
 * @ jshint = JavaScriptのsyntax、構文チェックを行う。
 *
 * TEST
-* @ mocha = TESTライブラリ
-* @ util  = プラグイン用のユーティリティ関数
-* @ broserify = ブラウザ用JSを用意する。（テスト時のNode用JSを省く）
-* @ vinyl-source-stream = gulp用のオブジェクトに変換する
-* @ vinyl-buffer = Uglifyする際にgulp用のオブジェクトに変換する
+* @ qunit = テストプラグインQUnit
+*
 */
 var concat = require('gulp-concat');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
-var mocha = require('gulp-mocha');
-var util  = require('gulp-util');
-var browserify = require('browserify');
-var vinyl = require('vinyl-source-stream');
-var vinylBuffer = require('vinyl-buffer');
+var qunit  = require('gulp-qunit');
+var karma  = require('karma');
+var jsdoc  = require('gulp-jsdoc');
 
-g.task('mocha', function() {
-	var reporter = 'nyan';// list
-	return g.src([srcPath+'test/**/*.js'], {read: false}).pipe(
-		mocha({reporter: reporter})
-	).on('error', util.log)
-});
-
-g.task('compress',['mocha'], function() {
-	browserify({
-		entries:[srcPath + 'js/test_test.js']
-	}).bundle().pipe(vinyl('app.js')).pipe(vinylBuffer())
-	.pipe(g.dest(buildPath+'js/'));
+g.task('qunit',function(){
+	return g.src(src+'test/index.html')
+	.pipe(qunit());
 });
 
 g.task('lint', function() {
-	return g.src([srcPath + 'js/**/*.js','!'+ srcPath + 'js/**/lib/*.js'])
-	.pipe(jshint())
+	g.src(srcPath+'test/**/*.*')
+	.pipe(g.dest(buildPath+'test/'));
+	return g.src(prop.JSHINT_TARGET_FILES)
+	.pipe(jshint('.jshintrc'))
 	.pipe(jshint.reporter('default'));
+
 });
+g.task("jsdoc", function() {
+  g.src([prop.SRC_PATH+"**/*.js"])
+    .pipe(jsdoc.parser({
+    	name:'sitname',
+    	version:'0.0.0'
+    }))
+    .pipe(jsdoc.generator(prop.JSDOC, {path:'ink-docstrap',systemName:'sitename',theme:'darkly',linenums:true}, {outputSourceFiles:true}))
+});
+
 
 function copyJS(){
 	g.src(srcPath+'js/**/*.json')
@@ -151,7 +161,7 @@ g.task('sass',function(){
 		}
 	)
 	.on('error',function(txt) {
-				console.error('ERRor',txt.message);
+		console.error('ERRor',txt.message);
 	})
 	.pipe(plumber())
 	.pipe(autoprefix({
@@ -170,19 +180,19 @@ g.task('sass',function(){
 //Jade系
 /**
 * @ jade = HTMLテンプレート言語
-* @ data = JSONファイルをjadeで参照できるようにする
 * @ dirs = 作業ファイル一覧を配列として取得する
+* @ data = JSONファイルをjadeで参照できるようにする
 */
 var jade = require('gulp-jade');
-var data = require('gulp-data');
 var dirs = require('recursive-readdir');
+// var data = require('gulp-data');
 
 g.task("jade",function(){
 	g.src(['./src/**/*.jade','!*/include/*.jade','!*/layouts/*.jade','!*/elements/*.jade'])
 	.pipe(plumber())
-	.pipe(data(function(file){
-		return require(srcPath+'_data/data.json')
-	}))
+	// .pipe(data(function(file){
+	// 	return require(srcPath+'_data/data.json')
+	// }))
 	.pipe(jade({
 		pretty:true
 	}))
@@ -209,9 +219,10 @@ g.task('watch',['sass','jade','copy'],function(){
 	g.watch('src/**/*.jade',['jade']);
 	g.watch('src/css/**/*.scss',['sass']);
 	g.watch('src/js/**/*.js',['lint']);
+	// g.watch('src/js/**/*.js',['jsdoc']);
 	g.watch('src/js/**/*.js',['copy:js']);
 	g.watch('src/img/**/*.{png,jpg,gif,svg}',['copy:img']);
-	g.watch(['src/js/**','src/test/**'],['mocha','compress']);
+	g.watch(['src/js/**','src/test/**'],['qunit']);
 })
 
 g.task('test',[])

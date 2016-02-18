@@ -1,7 +1,3 @@
-// var jquery = require('./lib/jquery.min.js');
-// var cookie = require('./lib/jquery.cookie.js');
-import _ = require('./lib/underscore-min.js');
-import backbone = require('./lib/backbone.js');
 var math = {
     addition:function(a,b){
         return a+b;
@@ -16,4 +12,4 @@ var math = {
 var Calc = Backbone.Model.extend({
     initialize:function(){console.log('init')},
 });
-module.exports = math;
+
