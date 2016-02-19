@@ -78,38 +78,34 @@ g.task('imagemin', function () {
 * @ jshint = JavaScriptのsyntax、構文チェックを行う。
 *
 * TEST
-* @ qunit = テストプラグインQUnit
 *
 */
 var concat = require('gulp-concat');
 var jshint = require('gulp-jshint');
 var uglify = require('gulp-uglify');
-var qunit  = require('gulp-qunit');
-var karma  = require('karma');
-var jsdoc  = require('gulp-jsdoc');
 
-g.task('qunit',function(){
-	return g.src(src+'test/index.html')
-	.pipe(qunit());
+var karma  = require('gulp-karma');
+console.log(karma)
+g.task('test',function(){
+	var files = [
+		buildPath+'js/lib/jquery.min.js',
+		buildPath+'js/lib/underscore-min.js',
+		buildPath+'js/lib/backbone.js',
+		buildPath+'js/test_test.js',
+		buildPath+'test/test_test.test.js',
+	];
+	console.log('karma task');
+	console.log(files);
+	g.src(files)
+	.pipe(karma({configFile:'karma.conf.js'}));
 });
 
 g.task('lint', function() {
-	g.src(srcPath+'test/**/*.*')
-	.pipe(g.dest(buildPath+'test/'));
 	return g.src(prop.JSHINT_TARGET_FILES)
 	.pipe(jshint('.jshintrc'))
 	.pipe(jshint.reporter('default'));
 
 });
-g.task("jsdoc", function() {
-  g.src([prop.SRC_PATH+"**/*.js"])
-    .pipe(jsdoc.parser({
-    	name:'sitname',
-    	version:'0.0.0'
-    }))
-    .pipe(jsdoc.generator(prop.JSDOC, {path:'ink-docstrap',systemName:'sitename',theme:'darkly',linenums:true}, {outputSourceFiles:true}))
-});
-
 
 function copyJS(){
 	g.src(srcPath+'js/**/*.json')
@@ -133,6 +129,14 @@ g.task('copy:js', function(){
 // copy image files
 g.task('copy:img', function(){
 	copyImg();
+});
+// copy image files
+g.task('copy:test', function(){
+	g.src(srcPath+'test/**/*.html')
+	.pipe(g.dest(buildPath+'test/'));
+
+	g.src(srcPath+'test/**/*.js')
+	.pipe(g.dest(buildPath+'test/'));
 });
 
 
@@ -219,13 +223,11 @@ g.task('watch',['sass','jade','copy'],function(){
 	g.watch('src/**/*.jade',['jade']);
 	g.watch('src/css/**/*.scss',['sass']);
 	g.watch('src/js/**/*.js',['lint']);
-	// g.watch('src/js/**/*.js',['jsdoc']);
 	g.watch('src/js/**/*.js',['copy:js']);
+	g.watch('src/test/**/*.js',['copy:test']);
+	g.watch('src/test/**/*.html',['copy:test']);
 	g.watch('src/img/**/*.{png,jpg,gif,svg}',['copy:img']);
-	g.watch(['src/js/**','src/test/**'],['qunit']);
 })
-
-g.task('test',[])
 
 g.task('default',['watch','server'])
 

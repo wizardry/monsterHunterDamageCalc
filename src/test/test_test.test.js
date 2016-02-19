@@ -1,3 +1,25 @@
+/**
+* Nodeでも走るようにする
+*
+*/
+if(typeof exports !== 'undefined'){
+    var math = require('../js/test_test.js');
+    var util = require("util");
+    var QUnit = require('qunitjs');
+    var qunitTap = require('qunit-tap');
+    // console.log(qunitTap)
+    // qunitTap = qunitTap.qunitTap
+    QUnit.load();
+    QUnit.config.updateRate = 0;
+    qunitTap = qunitTap(QUnit,console.log)
+    exports.assert = QUnit;
+    QUnit.jUnitReport = function(report) {
+        console.log(report.xml);
+    };
+    // File lead and vars
+    console.log('nodejs');
+}
+
 
 /**
 * mocha style test
@@ -21,8 +43,10 @@ QUnit.module("math",{
 })
 QUnit.test("math TEST",function(){
     var mathTest = math;
-    console.log(0);
     QUnit.assert.deepEqual(mathTest.addition(1,1),2,'足し算 1+1=2');
     QUnit.assert.deepEqual(mathTest.multiplication(2,5),10,'掛け算 2*5=10');
     QUnit.assert.deepEqual(mathTest.max(1,10),10,'最大値取得');
 })
+
+if(typeof exports !== 'undefined'){
+}
