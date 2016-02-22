@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
+    basePath: './build',
 
 
     // frameworks to use
@@ -28,13 +28,24 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
+        './js/**/*.js': 'coverage',
+        './test/**/*.js': 'coverage',
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['progress','coverage','junit'],
+
+    // karma-junit-reporter
+    // the default configuration 
+    junitReporter: {
+      outputDir: './junit', // results will be saved as $outputDir/$browserName.xml 
+      outputFile: 'test-result.xml', // if included, results will be saved as $outputDir/$browserName/$outputFile 
+      suite: 'frontend test', // suite will become the package name attribute in xml testsuite element 
+      useBrowserName: true // add browser name to report and classes names 
+    },
 
 
     // web server port
@@ -56,7 +67,8 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS', 'Chrome'],
+    // browsers: ['PhantomJS', 'Chrome'],
+    browsers: ['PhantomJS'],
 
 
     // Continuous Integration mode
@@ -66,6 +78,16 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser should be started simultaneous
     concurrency: Infinity,
-    plugins:['karma-qunit', 'karma-chrome-launcher', 'karma-phantomjs-launcher']
+    coverageReporter: {
+      type : 'cobertura',
+      dir : 'xml/'
+    },
+    plugins:[
+        'karma-qunit', 
+        'karma-chrome-launcher', 
+        'karma-phantomjs-launcher', 
+        'karma-coverage', 
+        'karma-junit-reporter'
+    ]
   })
 }

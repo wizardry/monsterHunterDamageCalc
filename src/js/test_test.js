@@ -10,6 +10,11 @@ var math = {
     }
 };
 var Calc = Backbone.Model.extend({
-    initialize:function(){console.log('init')},
+    initialize:function(){
+        console.log('init')
+    },
+    minus:function(a,b){
+        return a-b;
+    }
 });
 

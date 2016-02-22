@@ -24,3 +24,11 @@ QUnit.test("math TEST",function(){
     QUnit.assert.deepEqual(mathTest.multiplication(2,5),10,'掛け算 2*5=10');
     QUnit.assert.deepEqual(mathTest.max(1,10),10,'最大値取得');
 });
+QUnit.module("BackboneModel - CALC",{
+    setup:function(){},
+    teardown:function(){},
+})
+QUnit.test("calc TEST",function(){
+    var calc = new Calc();
+    QUnit.assert.deepEqual(calc.minus(1,1),0,'引き算 1-1=0');
+});
